@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 15:47:46 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/11/20 19:39:59 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/06 13:39:06 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strrchr(const char *s, int c);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s);
+char	*ft_strupper(char *s);
+char	*ft_strlower(char *s);
 char	*ft_strrev(char *s);
 int		ft_contains(const char *s, char c);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);

@@ -6,7 +6,7 @@
 #    By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/12 14:05:22 by ivalimak          #+#    #+#              #
-#    Updated: 2023/12/05 16:31:45 by ivalimak         ###   ########.fr        #
+#    Updated: 2023/12/06 13:16:35 by ivalimak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,8 +23,8 @@ LIBDIR	=	libft
 LIBFT	=	$(LIBDIR)/libft.a
 
 SRCS	=	$(SRCDIR)/main.c \
-			$(SRCDIR)/exec.c \
-			$(SRCDIR)/cmd.c \
+			$(SRCDIR)/pipe.c \
+			$(SRCDIR)/error.c \
 			$(SRCDIR)/utils.c
 
 OBJS	=	$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRCS))

@@ -1,35 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   ft_strupper.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 14:39:17 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/05 16:10:06 by ivalimak         ###   ########.fr       */
+/*   Created: 2023/12/06 13:37:52 by ivalimak          #+#    #+#             */
+/*   Updated: 2023/12/06 14:06:58 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
 
-int	exec(char **cmd)
+char	*ft_strupper(char *s)
 {
-	pid_t	cmdpid;
-	int		status;
-	int		rv;
+	size_t	i;
 
-	cmdpid = fork();
-	if (cmdpid == 0)
+	i = 0;
+	while (s[i])
 	{
-		rv = execve(cmd[0], cmd, NULL);
-		if (rv == -1)
-			return (-1);
+		s[i] = ft_toupper(s[i]);
+		i++;
 	}
-	wait(&status);
-	if (WIFEXITED(status) != 1 || WEXITSTATUS(status) != 0)
-	{
-		perror("Error");
-		return (-1);
-	}
-	return (0);
+	return (s);
 }
