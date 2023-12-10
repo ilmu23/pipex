@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 18:52:50 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 17:52:32 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/10 19:34:59 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void	execpipe(t_cmd *cmds, t_pipe iopipe, int *status)
 	}
 	close(iopipe.pipes[1]);
 	checkerrpipe(iopipe.pipes[0]);
-	close(iopipe.pipes[0]);
 	freecmds(start);
 }
 
@@ -69,18 +68,35 @@ void	execcmd(t_cmd *cmd, t_pipe iopipe, size_t i)
 
 void	execfork(t_cmd *cmd, t_pipe iopipe, size_t i, int fd)
 {
+	ft_printf("command %s input stream ", cmd->argv[0]);
 	if (fd >= 0 && cmd->infile)
+	{
+		ft_printf("set to fd %d\n", fd);
 		dup2(fd, 0);
+	}
 	else if (cmd->infile)
+	{
+		ft_printf("closed due to open failure\n");
 		close(0);
+	}
 	else
+	{
+		ft_printf("piped through pfd %d\n", (int)i);
 		dup2(iopipe.pipes[i], 0);
-	if (fd >= 0 && cmd->outfile)
+	}
+	ft_printf("command %s output stream ", cmd->argv[0]);
+	if (fd >= 0 && cmd->outfile && cmd->hdoc == 0)
+	{
+		ft_printf("set to fd %d\n", fd);
 		dup2(fd, 1);
-	else if (cmd->outfile)
-		close(1);
-	else
+	}
+	else if (!cmd->outfile)
+	{
+		ft_printf("piped through pfd %d\n", (int)i + 3);
 		dup2(iopipe.pipes[i + 3], 1);
+	}
+	else
+		ft_printf("set to stdout\n");
 	dup2(iopipe.pipes[1], 2);
 	if (fd >= 0)
 		close(fd);

@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 14:39:17 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 15:36:17 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/10 19:18:02 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_pipe(const size_t argc, const char **argv, const int hdoc,
 	t_pipe	iopipe;
 	size_t	i;
 
-	iopipe.n = (argc * 2) - 4;
+	iopipe.n = (argc * 2) - 4 + (hdoc * 2);
 	iopipe.pipes = malloc(iopipe.n * sizeof(int));
 	if (!iopipe.pipes)
 		return (pipeerror());

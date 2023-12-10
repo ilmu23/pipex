@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:05:25 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 15:51:09 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/10 19:17:38 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # define E_EXEC 3
 # define E_ALLOC 4
 # define E_ARGS 5
+# define TMPFNAME ".here_doc"
+# define TMPFILEO O_WRONLY | O_CREAT
 
 typedef struct s_cmd
 {
@@ -70,6 +72,6 @@ char	**createcmd(const char *cmd, const char **env);
 char	*find(const char *cmd, const char **env);
 char	*try(const char *cmd);
 int		openio(t_cmd *cmd);
-int		get_doc(const char *limiter);
+int		get_doc(const char *limiter, int fd);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:15:42 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 17:39:25 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/10 19:27:26 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,27 +97,38 @@ int	openio(t_cmd *cmd)
 		if (cmd->infile)
 			fd = open(cmd->infile, O_RDONLY);
 		if (cmd->outfile)
-			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 00644);
+			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
 	else
 	{
 		if (cmd->infile)
-			fd = get_doc(cmd->infile);
+			fd = get_doc(cmd->infile, open(TMPFNAME, TMPFILEO, 0644));
 		if (cmd->outfile)
-			fd = open(cmd->outfile, O_RDONLY | O_CREAT | O_APPEND, 00644);
+			fd = open(cmd->outfile, O_RDONLY | O_CREAT | O_APPEND, 0644);
 	}
 	if (fd == -1)
 		openerror(cmd->infile, cmd->outfile);
+	if (fd >= 0)
+	{
+		if (cmd->infile)
+		{
+			if (cmd->hdoc == 0)
+				ft_printf("file %s opened at fd %d\n", cmd->infile, fd);
+			else
+				ft_printf("file %s opened at fd %d\n", TMPFNAME, fd);
+		}
+		else if (cmd->outfile)
+			ft_printf("file %s opened at fd %d\n", cmd->outfile, fd);
+	}
 	return (fd);
 }
 
-int	get_doc(const char *limiter)
+int	get_doc(const char *limiter, int fd)
 {
 	char	*line;
-	int		pfd[2];
 
-	if (pipe(pfd) != 0)
-		exit(pipeerror());
+	if (fd < 0)
+		exit (openerror(TMPFNAME, NULL));
 	ft_printf("> ");
 	line = get_next_line(0);
 	while (line)
@@ -127,11 +138,15 @@ int	get_doc(const char *limiter)
 			free(line);
 			break ;
 		}
-		ft_putstr_fd(line, pfd[1]);
+		ft_putstr_fd(line, fd);
 		free(line);
 		ft_printf("> ");
 		line = get_next_line(0);
 	}
-	close(pfd[1]);
-	return (pfd[0]);
+	close(fd);
+	fd = open(TMPFNAME, O_RDONLY);
+	if (fd < 1)
+		exit(openerror(TMPFNAME, NULL));
+	unlink(TMPFNAME);
+	return (fd);
 }
