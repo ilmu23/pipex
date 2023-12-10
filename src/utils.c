@@ -6,82 +6,132 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:15:42 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/06 14:43:32 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/10 17:39:25 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	**createcmd(char *cmd)
+char	**createcmd(const char *cmd, const char **env)
 {
 	size_t	i;
 	char	**out;
+	char	*path;
 
-	out = malloc(4 * sizeof(char *));
-	if (!out)
-		return (NULL);
-	i = 0;
-	out[i] = ft_strdup("/bin/sh");
-	if (!out[i++])
+	out = ft_splitstrs(cmd, ' ');
+	path = NULL;
+	if (out && *env)
 	{
-		free(out);
-		return (NULL);
+		i = 0;
+		while (env[i] && ft_strncmp(env[i], "PATH", 4) != 0)
+			i++;
+		path = find(out[0], (const char **)ft_split(env[i] + 5, ':'));
 	}
-	out[i] = ft_strdup("-c");
-	if (!out[i++])
+	else if (out)
+		path = try(out[0]);
+	if (!path)
 	{
-		free(out[0]);
-		free(out);
-		return (NULL);
+		if (out)
+			ft_freestrs(out);
+		perror("pipex");
+		exit(E_ALLOC);
 	}
-	out[i++] = cmd;
-	out[i] = NULL;
+	free(out[0]);
+	out[0] = path;
 	return (out);
 }
 
-void	closepipe(int *pipe)
-{
-	close(pipe[0]);
-	close(pipe[1]);
-}
-
-void	freestrs(char **arr)
+char	*find(const char *cmd, const char **path)
 {
 	size_t	i;
+	char	*tmp;
 
 	i = 0;
-	while (arr[i])
-		free(arr[i++]);
-	free(arr);
-}
-
-void	writefile(int fd, char *fname)
-{
-	char	*line;
-	int		outfd;
-
-	outfd = open(fname, O_CREAT | O_TRUNC | O_WRONLY, 00644);
-	if (outfd < 0)
-		exit(openerror(fname));
-	line = get_next_line(fd);
-	while (line)
+	while (path[i])
 	{
-		ft_putstr_fd(line, outfd);
-		free(line);
-		line = get_next_line(fd);
+		tmp = ft_strsjoin(path[i++], cmd, '/');
+		if (!tmp)
+		{
+			ft_freestrs((char **)path);
+			return (NULL);
+		}
+		if (access(tmp, X_OK) == 0)
+			return (tmp);
+		free(tmp);
 	}
+	return (ft_strdup(cmd));
 }
 
-int	fillpipe(int pfd, int fd)
+char	*try(const char *cmd)
 {
 	char	*tmp;
 
-	tmp = get_next_line(fd);
-	while (tmp)
+	tmp = ft_strjoin("/bin/", cmd);
+	if (!tmp)
+		return (NULL);
+	if (access(tmp, X_OK) == 0)
+		return (tmp);
+	free(tmp);
+	tmp = ft_strjoin("/usr/local/bin/", cmd);
+	if (!tmp)
+		return (NULL);
+	if (access(tmp, X_OK) == 0)
+		return (tmp);
+	free(tmp);
+	tmp = ft_strjoin("/usr/bin/", cmd);
+	if (!tmp)
+		return (NULL);
+	if (access(tmp, X_OK) == 0)
+		return (tmp);
+	free(tmp);
+	return (ft_strdup(cmd));
+}
+
+int	openio(t_cmd *cmd)
+{
+	int	fd;
+
+	fd = -2;
+	if (cmd->hdoc == 0)
 	{
-		write(pfd, tmp, ft_strlen(tmp));
-		free(tmp);
-		tmp = get_next_line(fd);
+		if (cmd->infile)
+			fd = open(cmd->infile, O_RDONLY);
+		if (cmd->outfile)
+			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 00644);
 	}
-	return (0);
+	else
+	{
+		if (cmd->infile)
+			fd = get_doc(cmd->infile);
+		if (cmd->outfile)
+			fd = open(cmd->outfile, O_RDONLY | O_CREAT | O_APPEND, 00644);
+	}
+	if (fd == -1)
+		openerror(cmd->infile, cmd->outfile);
+	return (fd);
+}
+
+int	get_doc(const char *limiter)
+{
+	char	*line;
+	int		pfd[2];
+
+	if (pipe(pfd) != 0)
+		exit(pipeerror());
+	ft_printf("> ");
+	line = get_next_line(0);
+	while (line)
+	{
+		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
+		{
+			free(line);
+			break ;
+		}
+		ft_putstr_fd(line, pfd[1]);
+		free(line);
+		ft_printf("> ");
+		line = get_next_line(0);
+	}
+	close(pfd[1]);
+	return (pfd[0]);
 }

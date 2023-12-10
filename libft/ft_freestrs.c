@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_freestrs.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 12:04:42 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 18:03:08 by ivalimak         ###   ########.fr       */
+/*   Created: 2023/12/10 14:14:00 by ivalimak          #+#    #+#             */
+/*   Updated: 2023/12/10 14:16:52 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **env)
+void	ft_freestrs(char **arr)
 {
-	if (argc != 5)
-		return (E_ARGS);
-	return (ft_pipe((const size_t)argc - 1,
-			(const char **)&argv[1], 0, (const char **)env));
+	size_t	i;
+
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
 }

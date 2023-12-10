@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 13:15:57 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/06 17:17:57 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/10 14:51:51 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 static int	puterrline(char **line);
 
-void	checkerrpipe(int fd)
+void	checkerrpipe(const int fd)
 {
 	char	*line;
 
 	line = get_next_line(fd);
 	while (line)
 	{
-		if (ft_strncmp(line, "/bin/sh", 7) == 0)
+		if (ft_strncmp(line, "/", 1) == 0)
 		{
 			if (puterrline(ft_split(line, ' ')) < 0)
 				return ;
@@ -44,21 +44,25 @@ static int	puterrline(char **line)
 		return (-1);
 	}
 	i = 1;
-	ft_putstr_fd("pipex: ", 2);
+	ft_putstr_fd(ft_strrchr(line[0], '/') + 1, 2);
+	ft_putchar_fd(' ', 2);
 	while (line[i])
 	{
 		ft_putstr_fd(line[i++], 2);
 		if (line[i])
 			ft_putchar_fd(' ', 2);
 	}
-	freestrs(line);
+	ft_freestrs(line);
 	return (0);
 }
 
-int	openerror(char *fname)
+int	openerror(const char *infile, const char *outfile)
 {
 	ft_putstr_fd("pipex: ", 2);
-	perror(fname);
+	if (infile)
+		perror(infile);
+	else
+		perror(outfile);
 	return (E_OPEN);
 }
 
@@ -66,4 +70,10 @@ int	pipeerror(void)
 {
 	perror("pipex");
 	return (E_PIPE);
+}
+
+int	forkerror(void)
+{
+	perror("pipex");
+	return (E_EXEC);
 }

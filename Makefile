@@ -6,7 +6,7 @@
 #    By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/12 14:05:22 by ivalimak          #+#    #+#              #
-#    Updated: 2023/12/06 13:16:35 by ivalimak         ###   ########.fr        #
+#    Updated: 2023/12/09 17:44:25 by ivalimak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,18 +22,32 @@ LIBDIR	=	libft
 
 LIBFT	=	$(LIBDIR)/libft.a
 
-SRCS	=	$(SRCDIR)/main.c \
+SRCS	=	$(SRCDIR)/main.c
+
+BSRCS	=	$(SRCDIR)/main_bonus.c
+
+CSRCS	=	$(SRCDIR)/cmd.c \
 			$(SRCDIR)/pipe.c \
+			$(SRCDIR)/exec.c \
 			$(SRCDIR)/error.c \
-			$(SRCDIR)/utils.c
+			$(SRCDIR)/utils.c \
 
 OBJS	=	$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRCS))
+BOBJS	=	$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(BSRCS))
+COBJS	=	$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(CSRCS))
 
 all: $(NAME)
 
-$(NAME): $(LIBFT) $(OBJDIR) $(OBJS)
+$(NAME): $(LIBFT) $(OBJDIR) $(OBJS) $(COBJS)
 	@echo Compiling $(NAME)...
-	@$(CC) $(CFLAGS) $(OBJS) -L$(LIBDIR) -lft -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(COBJS) -L$(LIBDIR) -lft -o $(NAME)
+
+bonus: .bonus
+
+.bonus: $(LIBFT) $(OBJDIR) $(BOBJS) $(COBJS)
+	@echo Compiling $(NAME) bonus...
+	@$(CC) $(CFLAGS) $(BOBJS) $(COBJS) -L$(LIBDIR) -lft -o $(NAME)
+	@touch .bonus
 
 $(LIBFT):
 	@make -C $(LIBDIR) --no-print-directory
@@ -48,6 +62,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 clean:
 	@make -C $(LIBDIR) clean --no-print-directory
 	@rm -rf $(OBJDIR)
+	@rm -f .bonus
 
 fclean: clean
 	@make -C $(LIBDIR) fclean --no-print-directory

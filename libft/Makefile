@@ -6,7 +6,7 @@
 #    By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/23 15:26:18 by ivalimak          #+#    #+#              #
-#    Updated: 2023/12/06 14:03:34 by ivalimak         ###   ########.fr        #
+#    Updated: 2023/12/10 14:16:04 by ivalimak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,12 +42,15 @@ SRCS	=	ft_atoi.c \
 			ft_putchar_fd.c \
 			ft_putendl_fd.c \
 			ft_putstr_fd.c \
+			ft_splitstrs.c \
+			ft_freestrs.c \
 			ft_split.c \
 			ft_strchr.c \
 			ft_strdup.c \
 			ft_striteri.c \
 			ft_strupper.c \
 			ft_strlower.c \
+			ft_strsjoin.c \
 			ft_strjoin.c \
 			ft_strlcat.c \
 			ft_strlcpy.c \
