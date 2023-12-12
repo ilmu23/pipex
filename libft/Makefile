@@ -6,7 +6,7 @@
 #    By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/23 15:26:18 by ivalimak          #+#    #+#              #
-#    Updated: 2023/12/10 14:16:04 by ivalimak         ###   ########.fr        #
+#    Updated: 2023/12/11 19:03:58 by ivalimak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,8 @@ SRCS	=	ft_atoi.c \
 			ft_strchr.c \
 			ft_strdup.c \
 			ft_striteri.c \
+			ft_strremove.c \
+			ft_subescstr.c \
 			ft_strupper.c \
 			ft_strlower.c \
 			ft_strsjoin.c \

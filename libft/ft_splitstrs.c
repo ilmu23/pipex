@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/24 20:02:23 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 14:37:56 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/11 19:09:39 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static size_t	getsplits(char const *s, char c)
 
 static size_t	getstrend(char const *s, size_t i, const char c)
 {
-	while (s[i] && s[i] != c)
+	while (s[i] && (s[i] != c || s[i - 1] == '\\'))
 		i++;
 	if (s[i])
 		i++;
@@ -89,7 +89,7 @@ static char	*makesplit(char const *s, char c)
 	{
 		j = i + 1;
 		i = getstrend(s, i + 1, s[i]);
-		return (ft_substr(s, j, i - 1 - j));
+		return (ft_subescstr(s, j, i - 1 - j));
 	}
 	while (s[i] && s[i] == c)
 		i++;

@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:05:25 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 19:17:38 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/11 19:42:30 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,10 @@
 # include <sys/wait.h>
 # define E_OPEN 1
 # define E_PIPE 2
-# define E_EXEC 3
-# define E_ALLOC 4
+# define E_ALLOC 3
 # define E_ARGS 5
+# define E_EXEC 127
 # define TMPFNAME ".here_doc"
-# define TMPFILEO O_WRONLY | O_CREAT
 
 typedef struct s_cmd
 {
@@ -52,7 +51,7 @@ int		ft_pipe(const size_t argc, const char **argv, const int hdoc,
 t_cmd	*parseargs(const size_t argc, const char **argv, const int hdoc,
 			const char **env);
 t_cmd	*newcmd(const char *cmd, const int hdoc, const char **env);
-t_cmd	*lastcmd(t_cmd *cmds);
+char	**cmdarr(const char *cmd);
 void	addcmd(t_cmd **cmds, t_cmd *new);
 void	freecmds(t_cmd *cmds);
 

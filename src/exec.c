@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 18:52:50 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 19:34:59 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/11 17:42:48 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ void	execcmd(t_cmd *cmd, t_pipe iopipe, size_t i)
 	fd = openio(cmd);
 	if (fd == -1 && cmd->outfile)
 		exit(E_OPEN);
-	if (fd != -1 && access(cmd->argv[0], X_OK) != 0)
+	if (fd != -1 && access(cmd->argv[0], X_OK) != 0
+		&& (*(cmd->argv[0]) || !cmd->next || *(cmd->next->argv[0])))
 	{
 		ft_putstr_fd("pipex: ", 2);
 		ft_putstr_fd(cmd->argv[0], 2);
@@ -68,35 +69,16 @@ void	execcmd(t_cmd *cmd, t_pipe iopipe, size_t i)
 
 void	execfork(t_cmd *cmd, t_pipe iopipe, size_t i, int fd)
 {
-	ft_printf("command %s input stream ", cmd->argv[0]);
 	if (fd >= 0 && cmd->infile)
-	{
-		ft_printf("set to fd %d\n", fd);
 		dup2(fd, 0);
-	}
 	else if (cmd->infile)
-	{
-		ft_printf("closed due to open failure\n");
 		close(0);
-	}
 	else
-	{
-		ft_printf("piped through pfd %d\n", (int)i);
 		dup2(iopipe.pipes[i], 0);
-	}
-	ft_printf("command %s output stream ", cmd->argv[0]);
-	if (fd >= 0 && cmd->outfile && cmd->hdoc == 0)
-	{
-		ft_printf("set to fd %d\n", fd);
+	if (fd >= 0 && cmd->outfile && cmd->hdoc != 2)
 		dup2(fd, 1);
-	}
 	else if (!cmd->outfile)
-	{
-		ft_printf("piped through pfd %d\n", (int)i + 3);
 		dup2(iopipe.pipes[i + 3], 1);
-	}
-	else
-		ft_printf("set to stdout\n");
 	dup2(iopipe.pipes[1], 2);
 	if (fd >= 0)
 		close(fd);
@@ -106,7 +88,5 @@ void	execfork(t_cmd *cmd, t_pipe iopipe, size_t i, int fd)
 	if (fd == -1)
 		return ;
 	execve(cmd->argv[0], cmd->argv, (char **)cmd->env);
-	close(0);
-	close(1);
-	close(2);
+	exit (E_EXEC);
 }

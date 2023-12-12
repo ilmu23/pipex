@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:15:42 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 19:27:26 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/11 19:39:37 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	**createcmd(const char *cmd, const char **env)
 	}
 	else if (out)
 		path = try(out[0]);
-	if (!path)
+	if (!path && *cmd)
 	{
 		if (out)
 			ft_freestrs(out);
@@ -46,18 +46,16 @@ char	*find(const char *cmd, const char **path)
 	size_t	i;
 	char	*tmp;
 
+	if (!path)
+		return (NULL);
 	i = 0;
-	while (path[i])
+	tmp = ft_strsjoin(path[i++], cmd, '/');
+	while (path[i] && tmp)
 	{
-		tmp = ft_strsjoin(path[i++], cmd, '/');
-		if (!tmp)
-		{
-			ft_freestrs((char **)path);
-			return (NULL);
-		}
 		if (access(tmp, X_OK) == 0)
 			return (tmp);
 		free(tmp);
+		tmp = ft_strsjoin(path[i++], cmd, '/');
 	}
 	return (ft_strdup(cmd));
 }
@@ -102,24 +100,12 @@ int	openio(t_cmd *cmd)
 	else
 	{
 		if (cmd->infile)
-			fd = get_doc(cmd->infile, open(TMPFNAME, TMPFILEO, 0644));
+			fd = get_doc(cmd->infile, open(TMPFNAME, O_WRONLY | O_CREAT, 0644));
 		if (cmd->outfile)
-			fd = open(cmd->outfile, O_RDONLY | O_CREAT | O_APPEND, 0644);
+			fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	}
 	if (fd == -1)
 		openerror(cmd->infile, cmd->outfile);
-	if (fd >= 0)
-	{
-		if (cmd->infile)
-		{
-			if (cmd->hdoc == 0)
-				ft_printf("file %s opened at fd %d\n", cmd->infile, fd);
-			else
-				ft_printf("file %s opened at fd %d\n", TMPFNAME, fd);
-		}
-		else if (cmd->outfile)
-			ft_printf("file %s opened at fd %d\n", cmd->outfile, fd);
-	}
 	return (fd);
 }
 

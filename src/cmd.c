@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:28:55 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/10 15:51:05 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/11 19:54:24 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,10 @@ t_cmd	*newcmd(const char *cmd, const int hdoc, const char **env)
 	out = malloc(sizeof(t_cmd));
 	if (!out)
 		return (NULL);
-	out->argv = createcmd(cmd, env);
+	if (!*cmd)
+		out->argv = cmdarr(cmd);
+	else
+		out->argv = createcmd(cmd, env);
 	if (!out->argv)
 	{
 		free(out);
@@ -61,21 +64,31 @@ t_cmd	*newcmd(const char *cmd, const int hdoc, const char **env)
 	return (out);
 }
 
-t_cmd	*lastcmd(t_cmd *cmds)
+char	**cmdarr(const char *cmd)
 {
-	while (cmds->next)
-		cmds = cmds->next;
-	return (cmds);
+	char	**out;
+
+	out = malloc(2 * sizeof(char *));
+	if (!out)
+		return (NULL);
+	out[0] = ft_strdup(cmd);
+	out[1] = NULL;
+	return (out);
 }
 
 void	addcmd(t_cmd **cmds, t_cmd *new)
 {
+	t_cmd	*tmp;
+
 	if (!(*cmds))
 	{
 		*cmds = new;
 		return ;
 	}
-	lastcmd(*cmds)->next = new;
+	tmp = *cmds;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
 }
 
 void	freecmds(t_cmd *cmds)

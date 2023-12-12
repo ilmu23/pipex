@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_substr.c                                        :+:      :+:    :+:   */
+/*   ft_subescstr.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/24 18:41:02 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/08 13:59:37 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/11 19:11:00 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_subescstr(char const *s, unsigned int start, size_t len)
 {
 	char	*out;
+	char	*tmp;
 	size_t	slen;
 
 	if (!s)
@@ -24,9 +25,11 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	slen = ft_strlen(&s[start]);
 	if (len > slen)
 		len = slen;
-	out = ft_calloc(len + 1, sizeof(char));
-	if (!out)
+	tmp = ft_calloc(len + 1, sizeof(char));
+	if (!tmp)
 		return (NULL);
-	ft_strlcpy(out, &s[start], len + 1);
+	ft_strlcpy(tmp, &s[start], len + 1);
+	out = ft_strremove(tmp, '\\');
+	free(tmp);
 	return (out);
 }

@@ -1,26 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_bonus.c                                       :+:      :+:    :+:   */
+/*   ft_strremove.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/05 12:04:42 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/11 17:41:41 by ivalimak         ###   ########.fr       */
+/*   Created: 2023/12/11 18:56:22 by ivalimak          #+#    #+#             */
+/*   Updated: 2023/12/11 19:02:51 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **env)
+char	*ft_strremove(const char *s, const char c)
 {
-	int	hdoc;
+	size_t	i;
+	char	**arr;
+	char	*tmp;
+	char	*out;
 
-	hdoc = 0;
-	if (argc < 5)
-		return (E_ARGS);
-	if (strncmp(argv[1], "here_doc", 8) == 0)
-		hdoc = 1;
-	return (ft_pipe((const size_t)argc - 1 - hdoc,
-			(const char **)&argv[1 + hdoc], hdoc, (const char **)env));
+	arr = ft_split(s, c);
+	if (!arr)
+		return (NULL);
+	i = 0;
+	out = NULL;
+	while (arr[i])
+	{
+		tmp = ft_strjoin(out, arr[i]);
+		if (out)
+			free(out);
+		free(arr[i++]);
+		out = tmp;
+	}
+	free(arr);
+	return (out);
 }
