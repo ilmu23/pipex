@@ -6,10 +6,11 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:15:42 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/11 19:39:37 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/12 17:11:39 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "pipex.h"
 
 char	**createcmd(const char *cmd, const char **env)
@@ -18,16 +19,16 @@ char	**createcmd(const char *cmd, const char **env)
 	char	**out;
 	char	*path;
 
+	i = 0;
 	out = ft_splitstrs(cmd, ' ');
 	path = NULL;
-	if (out && *env)
+	while (out && env[i])
 	{
-		i = 0;
-		while (env[i] && ft_strncmp(env[i], "PATH", 4) != 0)
-			i++;
-		path = find(out[0], (const char **)ft_split(env[i] + 5, ':'));
+		if (ft_strncmp(env[i], "PATH", 4) == 0)
+			path = find(out[0], (const char **)ft_split(env[i] + 5, ':'));
+		i++;
 	}
-	else if (out)
+	if (out && !path)
 		path = try(out[0]);
 	if (!path && *cmd)
 	{
@@ -53,10 +54,14 @@ char	*find(const char *cmd, const char **path)
 	while (path[i] && tmp)
 	{
 		if (access(tmp, X_OK) == 0)
+		{
+			ft_freestrs((char **)path);
 			return (tmp);
+		}
 		free(tmp);
 		tmp = ft_strsjoin(path[i++], cmd, '/');
 	}
+	ft_freestrs((char **)path);
 	return (ft_strdup(cmd));
 }
 
