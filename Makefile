@@ -6,15 +6,14 @@
 #    By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/12 14:05:22 by ivalimak          #+#    #+#              #
-#    Updated: 2023/12/12 14:40:57 by ivalimak         ###   ########.fr        #
+#    Updated: 2023/12/12 15:57:54 by ivalimak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	pipex
 
 CC		=	cc
-CFLAGS	=	-Wall -Wextra -Werror -g
-#CFLAGS	=	-Wall -Wextra -Werror -g -fsanitize=address -static-libsan
+CFLAGS	=	-Wall -Wextra -Werror
 
 SRCDIR	=	src
 OBJDIR	=	obj
