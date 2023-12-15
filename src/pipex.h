@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:05:25 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/11 19:42:30 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/13 16:04:19 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ int		forkerror(void);
 
 // utils.c
 char	**createcmd(const char *cmd, const char **env);
-char	*find(const char *cmd, const char **env);
-char	*try(const char *cmd);
+char	*find(const char **cmd, const char **env);
+void	checkcmd(t_cmd *cmd);
 int		openio(t_cmd *cmd);
 int		get_doc(const char *limiter, int fd);
 

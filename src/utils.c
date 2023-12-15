@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 12:15:42 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/12 17:11:39 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/13 16:11:25 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,28 +21,28 @@ char	**createcmd(const char *cmd, const char **env)
 
 	i = 0;
 	out = ft_splitstrs(cmd, ' ');
-	path = NULL;
-	while (out && env[i])
+	if (!out)
 	{
-		if (ft_strncmp(env[i], "PATH", 4) == 0)
-			path = find(out[0], (const char **)ft_split(env[i] + 5, ':'));
-		i++;
-	}
-	if (out && !path)
-		path = try(out[0]);
-	if (!path && *cmd)
-	{
-		if (out)
-			ft_freestrs(out);
 		perror("pipex");
 		exit(E_ALLOC);
 	}
-	free(out[0]);
-	out[0] = path;
+	path = NULL;
+	while (env[i] && !path)
+	{
+		if (ft_strncmp(env[i], "PATH", 4) == 0 && ft_strlen(env[i]) > 5)
+			path = find((const char **)out,
+					(const char **)ft_split(env[i] + 5, ':'));
+		i++;
+	}
+	if (path && env[i])
+	{
+		free(out[0]);
+		out[0] = path;
+	}
 	return (out);
 }
 
-char	*find(const char *cmd, const char **path)
+char	*find(const char **cmd, const char **path)
 {
 	size_t	i;
 	char	*tmp;
@@ -50,7 +50,7 @@ char	*find(const char *cmd, const char **path)
 	if (!path)
 		return (NULL);
 	i = 0;
-	tmp = ft_strsjoin(path[i++], cmd, '/');
+	tmp = ft_strsjoin(path[i++], cmd[0], '/');
 	while (path[i] && tmp)
 	{
 		if (access(tmp, X_OK) == 0)
@@ -59,35 +59,39 @@ char	*find(const char *cmd, const char **path)
 			return (tmp);
 		}
 		free(tmp);
-		tmp = ft_strsjoin(path[i++], cmd, '/');
+		tmp = ft_strsjoin(path[i++], cmd[0], '/');
 	}
 	ft_freestrs((char **)path);
-	return (ft_strdup(cmd));
+	if (!tmp)
+	{
+		ft_freestrs((char **)cmd);
+		perror("pipex");
+		exit(E_ALLOC);
+	}
+	return (ft_strdup(cmd[0]));
 }
 
-char	*try(const char *cmd)
+void	checkcmd(t_cmd *cmd)
 {
-	char	*tmp;
+	size_t	i;
 
-	tmp = ft_strjoin("/bin/", cmd);
-	if (!tmp)
-		return (NULL);
-	if (access(tmp, X_OK) == 0)
-		return (tmp);
-	free(tmp);
-	tmp = ft_strjoin("/usr/local/bin/", cmd);
-	if (!tmp)
-		return (NULL);
-	if (access(tmp, X_OK) == 0)
-		return (tmp);
-	free(tmp);
-	tmp = ft_strjoin("/usr/bin/", cmd);
-	if (!tmp)
-		return (NULL);
-	if (access(tmp, X_OK) == 0)
-		return (tmp);
-	free(tmp);
-	return (ft_strdup(cmd));
+	i = 0;
+	while (cmd->env[i])
+	{
+		if (ft_strncmp(cmd->env[i], "PATH", 4) == 0)
+			break ;
+		i++;
+	}
+	if (access(cmd->argv[0], X_OK) != 0)
+	{
+		ft_putstr_fd("pipex: ", 2);
+		ft_putstr_fd(cmd->argv[0], 2);
+		ft_putstr_fd(": ", 2);
+		if (cmd->env[i] && ft_strlen(cmd->env[i]) > 5)
+			ft_putendl_fd("command not found", 2);
+		else
+			perror(NULL);
+	}
 }
 
 int	openio(t_cmd *cmd)

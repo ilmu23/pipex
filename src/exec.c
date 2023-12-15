@@ -6,7 +6,7 @@
 /*   By: ivalimak <ivalimak@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 18:52:50 by ivalimak          #+#    #+#             */
-/*   Updated: 2023/12/12 16:37:46 by ivalimak         ###   ########.fr       */
+/*   Updated: 2023/12/13 16:04:31 by ivalimak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,8 @@ void	execcmd(t_cmd *cmd, t_pipe iopipe, size_t i)
 	fd = openio(cmd);
 	if (fd == -1 && cmd->outfile)
 		exit(E_OPEN);
-	if (fd != -1 && access(cmd->argv[0], X_OK) != 0
-		&& (*(cmd->argv[0]) || !cmd->next || *(cmd->next->argv[0])))
-	{
-		ft_putstr_fd("pipex: ", 2);
-		ft_putstr_fd(cmd->argv[0], 2);
-		ft_putendl_fd(": command not found", 2);
-	}
+	if (fd != -1)
+		checkcmd(cmd);
 	cmd->cmdpid = fork();
 	if (cmd->cmdpid < 0)
 		exit(forkerror());
